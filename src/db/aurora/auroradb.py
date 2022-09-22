@@ -1,7 +1,5 @@
 from typing import Generator
-
-from db.aurora.aurora_adaptor import SessionLocal
-
+from ..aurora.aurora_adaptor import SessionLocal
 
 def get_db() -> Generator:
     db = SessionLocal()

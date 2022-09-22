@@ -2,6 +2,9 @@ import psycopg2
 import os
 import sys
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 # getting the name of the directory
 # where the this file is present.
 current = os.path.dirname(os.path.realpath(__file__))
@@ -12,7 +15,7 @@ parent = os.path.dirname(current)
 # the sys.path.
 sys.path.append(parent)
 
-DATABASE_URL = f"""host='{os.environ.get("AURORA_URL")}' dbname='postgres' user='{os.environ.get("AURORA_USER")}' password='{os.environ.get("AURORA_PASSWORD")}'"""
+DATABASE_URL = f"""host='{os.environ.get("DB_HOST")}' port={os.environ.get("DB_PORT")} dbname='{os.environ.get("DB_NAME")}' user='{os.environ.get("DB_USER")}' password='{os.environ.get("DB_PASSWORD")}'"""
 
 
 class DatabaseFunction:

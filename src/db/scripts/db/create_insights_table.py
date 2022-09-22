@@ -1,15 +1,20 @@
 import aurora_db
+from dotenv import load_dotenv
 
 def create_insights_table():
     commands = """
-        CREATE TABLE insights (
-            id_insights INT(11) NOT NULL AUTO_INCREMENT,
-            created_at TIMESTAMP WITH TIME ZONE,
+        CREATE TABLE IF NOT EXISTS insights (
+            insight_id SERIAL PRIMARY KEY,
+            event_id TEXT,
+            event_time TIMESTAMP WITH TIME ZONE,
+            event_level TEXT,
+            event_category TEXT,
             error_message TEXT,
             region TEXT,
             username TEXT NOT NULL,
             description TEXT,
             request_id TEXT NOT NULL,
+            additional_data json
         )
     """
     
@@ -18,5 +23,6 @@ def create_insights_table():
    
 
 if __name__ == '__main__':
+    load_dotenv()
     create_insights_table()
     
