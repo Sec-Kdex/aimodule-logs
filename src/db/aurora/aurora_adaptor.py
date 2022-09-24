@@ -10,13 +10,6 @@ engine = create_engine(
     SQLALCHEMY_DATABASE_URL
 )
 
-print("-------------------------------------")
-print("-------------------------------------")
-print("-------------------------------------")
-print(engine.table_names(), SQLALCHEMY_DATABASE_URL)
-print("-------------------------------------")
-print("-------------------------------------")
-print("-------------------------------------")
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 

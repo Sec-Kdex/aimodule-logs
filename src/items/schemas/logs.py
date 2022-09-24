@@ -1,10 +1,13 @@
 from ...db.aurora.aurora_model import Base
-from sqlalchemy import Column, Integer, String, JSON, DATETIME
+from sqlalchemy import Column, Integer, String,JSON, DATETIME
+from sqlalchemy.dialects.postgresql import UUID
 
 class InsightsSchema(Base):
     __tablename__ = "insights"
 
     insight_id = Column(Integer, primary_key=True) # Auto-increment should be default
+    account_uuid = Column(String)
+    cloud_account_uuid = Column(String)
     event_id = Column(String)
     event_time = Column(DATETIME)
     event_level = Column(String)

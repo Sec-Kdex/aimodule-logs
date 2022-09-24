@@ -5,6 +5,8 @@ def create_insights_table():
     commands = """
         CREATE TABLE IF NOT EXISTS insights (
             insight_id SERIAL PRIMARY KEY,
+            account_uuid UUID NOT NULL,
+            cloud_account_uuid UUID NOT NULL,
             event_id TEXT,
             event_time TIMESTAMP WITH TIME ZONE,
             event_level TEXT,
