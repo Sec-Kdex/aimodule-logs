@@ -1,6 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
-from routers import insights
+from src.routers import insights
 from src.db.aurora.aurora_adaptor import SessionLocal
 from dotenv import load_dotenv
 import os

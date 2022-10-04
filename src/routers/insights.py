@@ -13,7 +13,7 @@ router = APIRouter()
 
 load_dotenv()
 
-@router.put("/userlogs/account_id/{account_id}/cloud_account_id/{cloud_account_id}")
+@router.put("/userlogs/accounts/{account_id}/cloud_accounts/{cloud_account_id}")
 async def update_logs_insights(
     account_id: str,
     cloud_account_id: str,
@@ -25,25 +25,22 @@ async def update_logs_insights(
 
     logs = []
 
-    for logJSON in json_response:
-        log = InsightModel.from_aws_dict(logJSON,account_id,cloud_account_id)
+    for aws_logs_JSON in json_response:
+        log = InsightModel.from_aws_dict(aws_logs_JSON,account_id,cloud_account_id)
         logs.append(log)
-
-    insights_collection = InsightsCollection()  
-
-    await insights_collection.upsert_insights(logs=logs,db=db)
 
     user_logs_azure_req_url = f'''{os.environ.get("USER_LOGS_URL")}accountID={account_id}&type=azure&cloudAccountID={cloud_account_id}'''
     
-    f = open('C:/Users/Downloads/azure_logs.json','r',encoding="utf8")
+    f = open('C:/Users/manis/Downloads/azure_logs.json','r',encoding="utf8")
 
     json_azure_data = json.load(f)
-    azure_logs = []
 
-    for logJSON in json_azure_data["responses"][0]["content"]["value"]:
-        log = InsightModel.from_azure_dict(logJSON,account_id,cloud_account_id)
-        azure_logs.append(log)
+    for aws_logs_JSON in json_azure_data["responses"][0]["content"]["value"]:
+        log = InsightModel.from_azure_dict(aws_logs_JSON,account_id,cloud_account_id)
+        logs.append(log)
+
+    insights_collection = InsightsCollection()  
     
-    await insights_collection.upsert_insights(logs=azure_logs,db=db)
+    await insights_collection.upsert_insights(logs=logs,db=db)
 
-    return azure_logs
+    return logs
