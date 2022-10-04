@@ -1,11 +1,11 @@
 from http.client import HTTPException
 from ..models.insights import InsightModel, InsightCreateBaseModel
 from sqlalchemy.orm import Session
-from .schemas.logs import InsightsSchema
+from .schemas.insights import InsightsSchema
 from typing import List
 from ..db.aurora.aurora_base import CRUDBase
 
-class LogInsightsCollection:
+class InsightsCollection:
     def __init__(self) -> None:
         self.model = CRUDBase(InsightsSchema)
 
