@@ -43,4 +43,4 @@ async def update_logs_insights(
     
     await insights_collection.upsert_insights(logs=logs,db=db)
 
-    return logs
+    return "logs updated successfully"
