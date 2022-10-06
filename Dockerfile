@@ -1,6 +1,17 @@
 # For more information, please refer to https://aka.ms/vscode-docker-python
 FROM python:3.8-slim
 
+ENV HOST_URL="127.0.0.1"
+ENV PORT=8000
+
+ENV DB_USER=root
+ENV DB_PASSWORD="2kLje5hjgAJUax"
+ENV DB_HOST="54.226.103.69"
+ENV DB_NAME=secdb
+ENV DB_PORT=5432
+
+ENV USER_LOGS_URL=http://54.226.103.69:3002/secdb/v1/acitivity/logs?        
+
 EXPOSE 8000
 
 # Keeps Python from generating .pyc files in the container

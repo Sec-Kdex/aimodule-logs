@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from fastapi import APIRouter, Depends
 import os
 from ..models.insights import InsightModel

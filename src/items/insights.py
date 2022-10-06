@@ -1,5 +1,5 @@
 from http.client import HTTPException
-from ..models.insights import InsightModel, InsightCreateBaseModel
+from ..models.insights import InsightModel
 from sqlalchemy.orm import Session
 from .schemas.insights import InsightsSchema
 from typing import List
@@ -17,9 +17,7 @@ class InsightsCollection:
         try:
             created_logs = []
             for log in logs:
-                #log_create = InsightCreateBaseModel(**log.dict())
                 created_log= self.model.create(db=db, obj_in=log)
-                
                 created_logs.append(created_log)
 
             return created_logs
