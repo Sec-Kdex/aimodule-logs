@@ -29,10 +29,7 @@ async def update_logs_insights(
         logs.append(log)
 
     user_logs_azure_req_url = f'''{os.environ.get("USER_LOGS_URL")}accountID={account_id}&type=azure&cloudAccountID={cloud_account_id}'''
-    
-    f = open('C:/Users/manis/Downloads/azure_logs.json','r',encoding="utf8")
-
-    json_azure_data = json.load(f)
+    json_azure_data = requests.get(user_logs_azure_req_url)
 
     for aws_logs_JSON in json_azure_data["responses"][0]["content"]["value"]:
         log = InsightModel.from_azure_dict(aws_logs_JSON,account_id,cloud_account_id)
