@@ -1,6 +1,5 @@
 from ...db.aurora.aurora_model import Base
 from sqlalchemy import Column, Integer, String,JSON, DATETIME
-from sqlalchemy.dialects.postgresql import UUID
 
 class InsightsSchema(Base):
     __tablename__ = "insights"

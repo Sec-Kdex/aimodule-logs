@@ -1,11 +1,11 @@
 from http.client import HTTPException
-from ..models.insights import InsightModel, InsightCreateBaseModel
+from ..models.insights import InsightModel
 from sqlalchemy.orm import Session
-from .schemas.logs import InsightsSchema
+from .schemas.insights import InsightsSchema
 from typing import List
 from ..db.aurora.aurora_base import CRUDBase
 
-class LogInsightsCollection:
+class InsightsCollection:
     def __init__(self) -> None:
         self.model = CRUDBase(InsightsSchema)
 
@@ -17,9 +17,7 @@ class LogInsightsCollection:
         try:
             created_logs = []
             for log in logs:
-                #log_create = InsightCreateBaseModel(**log.dict())
                 created_log= self.model.create(db=db, obj_in=log)
-                
                 created_logs.append(created_log)
 
             return created_logs
