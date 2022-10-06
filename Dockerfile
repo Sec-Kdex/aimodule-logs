@@ -22,7 +22,10 @@ ENV PYTHONUNBUFFERED=1
 
 # Install pip requirements
 COPY requirements.txt .
-RUN python -m pip install -r requirements.txt
+RUN \
+    apt-get update \
+    && apt-get -y install libpq-dev gcc \  
+    && python -m pip install -r requirements.txt --no-cache-dir
 
 WORKDIR /app
 COPY . /app
