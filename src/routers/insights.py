@@ -18,22 +18,30 @@ async def update_logs_insights(
     cloud_account_id: str,
     db: Session = Depends(auroradb.get_db)
 ):
+    logs = []
     user_logs_aws_req_url = f'''{os.environ.get("USER_LOGS_URL")}accountID={account_id}&type=aws&cloudAccountID={cloud_account_id}'''
     response = requests.get(user_logs_aws_req_url)
-    json_response = json.loads(response.text)
+    if response.text != None:
+        json_response = json.loads(response.text)
 
-    logs = []
-
-    for aws_logs_JSON in json_response:
-        log = InsightModel.from_aws_dict(aws_logs_JSON,account_id,cloud_account_id)
-        logs.append(log)
+        for aws_logs_JSON in json_response:
+            log = InsightModel.from_aws_dict(aws_logs_JSON,account_id,cloud_account_id)
+            logs.append(log)
 
     user_logs_azure_req_url = f'''{os.environ.get("USER_LOGS_URL")}accountID={account_id}&type=azure&cloudAccountID={cloud_account_id}'''
-    json_azure_data = requests.get(user_logs_azure_req_url)
-
-    for aws_logs_JSON in json_azure_data["responses"][0]["content"]["value"]:
-        log = InsightModel.from_azure_dict(aws_logs_JSON,account_id,cloud_account_id)
-        logs.append(log)
+    azure_response = requests.get(user_logs_azure_req_url)
+    
+    if azure_response.text != None and azure_response.text != "":
+        try:
+            json_azure_data = json.loads(azure_response.text)
+            
+            if json_azure_data != "" and json_azure_data != None:
+                if "responses" in json_azure_data.keys():
+                    for aws_logs_JSON in json_azure_data["responses"][0]["content"]["value"]:
+                        log = InsightModel.from_azure_dict(aws_logs_JSON,account_id,cloud_account_id)
+                        logs.append(log)
+        except:
+            pass
 
     insights_collection = InsightsCollection()  
     
