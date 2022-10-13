@@ -26,6 +26,7 @@ RUN \
     apt-get update \
     && apt-get -y install libpq-dev gcc \  
     && python -m pip install -r requirements.txt --no-cache-dir
+RUN pip install gunicorn
 
 WORKDIR /app
 COPY . /app
