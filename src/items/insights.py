@@ -24,3 +24,20 @@ class InsightsCollection:
     
         except Exception:
             raise HTTPException(status_code=500, detail="Something went wrong updating the logs")
+
+
+    async def add_insights(
+        self,
+        logs: List[InsightModel],
+        db: Session
+    ) -> any:
+        try:
+            created_logs = []
+            for log in logs:
+                created_log= self.model.create(db=db, obj_in=log)
+                created_logs.append(created_log)
+
+            return created_logs
+    
+        except Exception:
+            raise HTTPException(status_code=500, detail="Something went wrong while adding insights")
