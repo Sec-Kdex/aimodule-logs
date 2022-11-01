@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
 import re
-from constants import MAX_DF, MIN_DF, DATA_CLEANING_TARGET_COLS, SYMBOLS, FEATURE_COLS
+from ..aimodel.constants import MAX_DF, MIN_DF, DATA_CLEANING_TARGET_COLS, SYMBOLS, FEATURE_COLS
 from nltk.corpus import stopwords
 from nltk.stem import LancasterStemmer 
 

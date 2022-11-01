@@ -1,5 +1,5 @@
 import re
-from constants import DATA_CLEANING_TARGET_COLS, SYMBOLS
+from ..aimodel.constants import DATA_CLEANING_TARGET_COLS, SYMBOLS
 
 
 def cleanhtml(raw_html):

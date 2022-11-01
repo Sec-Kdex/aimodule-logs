@@ -2,11 +2,11 @@ import os
 from dotenv import load_dotenv
 import psycopg2
 import pandas as pd
-from feature_selection import data_cleaning
-from tfidf_approach import tfidf_vectorized_format
+from ..aimodel.feature_selection import data_cleaning
+from ..aimodel.tfidf_approach import tfidf_vectorized_format
 from sklearn.ensemble import IsolationForest
 import joblib
-from constants import FEATURE_COLS
+from ..aimodel.constants import FEATURE_COLS
 
 def predict_score(logs_dict):
     df = pd.DataFrame.from_dict(logs_dict)
