@@ -1,4 +1,4 @@
-from http.client import HTTPException
+from fastapi import HTTPException
 from ..models.insights import InsightModel
 from sqlalchemy.orm import Session
 from .schemas.insights import InsightsSchema
@@ -9,7 +9,7 @@ class InsightsCollection:
     def __init__(self) -> None:
         self.model = CRUDBase(InsightsSchema)
 
-    async def upsert_insights(
+    async def add_insights(
         self,
         logs: List[InsightModel],
         db: Session
@@ -20,7 +20,8 @@ class InsightsCollection:
                 created_log= self.model.create(db=db, obj_in=log)
                 created_logs.append(created_log)
 
-            return created_logs
+            return 'Total {} insights added'.format(len(created_logs))
     
-        except Exception:
-            raise HTTPException(status_code=500, detail="Something went wrong updating the logs")
+        except Exception as e:
+            print("error db: ",e)
+            raise HTTPException(status_code=500, detail="Something went wrong while saving the insights")

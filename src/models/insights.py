@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import Any
 from dataclasses import dataclass
-from pydantic import BaseModel
 from typing import List, Optional
 
 @dataclass
@@ -18,9 +17,10 @@ class InsightModel:
     description: str
     request_id: str
     additional_data: Optional[List[dict]]
+    anomaly_score: Optional[int]
 
     @staticmethod
-    def from_aws_dict(obj: Any,account_id:str,cloud_account_id:str) -> 'InsightModel':
+    def from_aws_dict(obj: Any,account_id:str,cloud_account_id:str,anomaly_score:int) -> 'InsightModel':
         _event_id = str(obj.get("eventID"))
         _event_time = obj.get("eventTime")
         _event_level = obj.get("eventType")
@@ -37,11 +37,12 @@ class InsightModel:
             ]
         _account_uuid = account_id
         _cloud_account_uuid = cloud_account_id
+        _anomaly_score = anomaly_score
         
-        return InsightModel(_account_uuid,_cloud_account_uuid,_event_id,_event_time, _event_level, _event_category, _error_message, _region, _username, _description, _request_id, _additional_data)
+        return InsightModel(_account_uuid,_cloud_account_uuid,_event_id,_event_time, _event_level, _event_category, _error_message, _region, _username, _description, _request_id, _additional_data, _anomaly_score)
 
     @staticmethod
-    def from_azure_dict(obj: Any,account_id:str,cloud_account_id:str) -> 'InsightModel':
+    def from_azure_dict(obj: Any,account_id:str,cloud_account_id:str,anomaly_score:int) -> 'InsightModel':
         _event_id = str(obj.get("eventDataId"))
         _event_time = obj.get("eventTimestamp")
         _event_level = obj.get("level")
@@ -60,20 +61,6 @@ class InsightModel:
             ]
         _account_uuid = account_id
         _cloud_account_uuid = cloud_account_id
-        
-        return InsightModel(_account_uuid,_cloud_account_uuid,_event_id,_event_time, _event_level, _event_category, _error_message, _region, _username, _description, _request_id, _additional_data)
+        _anomaly_score = anomaly_score
 
-
-class InsightCreateBaseModel(BaseModel):
-    account_uuid: str
-    cloud_account_uuid: str
-    event_id: str
-    event_time: datetime
-    event_level: str
-    event_category: str
-    error_message: str
-    region: str
-    username: str
-    description: str
-    request_id: str
-    additional_data: Optional[List[dict]]
+        return InsightModel(_account_uuid,_cloud_account_uuid,_event_id,_event_time, _event_level, _event_category, _error_message, _region, _username, _description, _request_id, _additional_data,_anomaly_score)

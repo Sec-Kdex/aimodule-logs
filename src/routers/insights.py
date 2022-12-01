@@ -1,50 +1,62 @@
-from fastapi import APIRouter, Depends
-import os
+from fastapi import APIRouter, Depends, HTTPException
 from ..models.insights import InsightModel
 from ..items.insights import InsightsCollection
 from sqlalchemy.orm import Session
 from ..db.aurora import auroradb
-import json
-import requests
 from dotenv import load_dotenv
+from typing import Optional, Any
+from pydantic import BaseModel
+from ..aimodel.predict import predict_score
 
 router = APIRouter()
 
 load_dotenv()
 
-@router.put("/userlogs/accounts/{account_id}/cloud_accounts/{cloud_account_id}")
-async def update_logs_insights(
+class CloudLogs(BaseModel):
+    aws_logs: Optional[Any] = None
+    azure_logs: Optional[Any] = None
+
+@router.post("/v1/insights/create")
+async def create_insights(
     account_id: str,
     cloud_account_id: str,
-    db: Session = Depends(auroradb.get_db)
+    cloud_logs: CloudLogs,
+    db: Session = Depends(auroradb.get_db)  
 ):
     logs = []
-    user_logs_aws_req_url = f'''{os.environ.get("USER_LOGS_URL")}accountID={account_id}&type=aws&cloudAccountID={cloud_account_id}'''
-    response = requests.get(user_logs_aws_req_url)
-    if response.text != None:
-        json_response = json.loads(response.text)
 
-        for aws_logs_JSON in json_response:
-            log = InsightModel.from_aws_dict(aws_logs_JSON,account_id,cloud_account_id)
-            logs.append(log)
-
-    user_logs_azure_req_url = f'''{os.environ.get("USER_LOGS_URL")}accountID={account_id}&type=azure&cloudAccountID={cloud_account_id}'''
-    azure_response = requests.get(user_logs_azure_req_url)
-    
-    if azure_response.text != None and azure_response.text != "":
-        try:
-            json_azure_data = json.loads(azure_response.text)
+    if cloud_logs:
+        cloud_logs_dict = cloud_logs.dict()
             
-            if json_azure_data != "" and json_azure_data != None:
-                if "responses" in json_azure_data.keys():
-                    for aws_logs_JSON in json_azure_data["responses"][0]["content"]["value"]:
-                        log = InsightModel.from_azure_dict(aws_logs_JSON,account_id,cloud_account_id)
+        if "aws_logs" in cloud_logs_dict.keys():
+            if isinstance(cloud_logs_dict["aws_logs"],list):
+                for aws_event in cloud_logs_dict["aws_logs"]:
+                    try:
+                        log = InsightModel.from_aws_dict(aws_event,account_id,cloud_account_id,0)
                         logs.append(log)
-        except:
-            pass
+                    except:
+                        pass
+        
+        if "azure_logs" in cloud_logs_dict.keys() and cloud_logs_dict["azure_logs"]:
+            if "responses" in cloud_logs_dict["azure_logs"].keys():
+                if isinstance(cloud_logs_dict["azure_logs"]["responses"],list):
+                    if "content" in cloud_logs_dict["azure_logs"]["responses"][0].keys():
+                        if "value" in cloud_logs_dict["azure_logs"]["responses"][0]["content"]:
+                            if isinstance(cloud_logs_dict["azure_logs"]["responses"][0]["content"]["value"],list):
+                                for azure_event in cloud_logs_dict["azure_logs"]["responses"][0]["content"]["value"]:
+                                    try:
+                                        log = InsightModel.from_azure_dict(azure_event,account_id,cloud_account_id,0)
+                                        logs.append(log)
 
-    insights_collection = InsightsCollection()  
+                                    except Exception as e:
+                                        pass
+
+    log_insights = predict_score(logs)
+
+    try:
+        insights_collection = InsightsCollection()
+        return await insights_collection.add_insights(logs=log_insights,db=db)  
     
-    await insights_collection.upsert_insights(logs=logs,db=db)
-
-    return "logs updated successfully"
+    except Exception as e:
+        print("error: ",e)
+        raise HTTPException(status_code=500, detail="Something went wrong while adding insights")

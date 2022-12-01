@@ -17,4 +17,5 @@ class InsightsSchema(Base):
     description = Column(String)
     request_id = Column(String)
     additional_data = Column(JSON)
+    anomaly_score = Column(Integer)
     
